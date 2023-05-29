@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include <ctype.h>
 #include <stdio.h>
 #include <string>
@@ -39,4 +40,41 @@ static int gettok()
 
         return tok_identifier;
     }
+
+    if (isdigit(last_char) || last_char == '.') {
+        std::string num_str;
+        do {
+            num_str += last_char;
+            last_char = getchar();
+        } while (isdigit(last_char) || last_char == '.');
+        num_val = std::strtod(num_str.c_str(), 0);
+        return tok_number;
+    }
+
+    if (last_char == '#') {
+        do
+            last_char = getchar();
+        while (last_char != EOF && last_char != '\n' && last_char != '\r');
+
+        if (last_char != EOF)
+            return gettok();
+    }
+
+    if (last_char == EOF)
+        return tok_eof;
+
+    int this_char = last_char;
+    last_char = getchar();
+    return this_char;
 }
+
+class ExprAST {
+public:
+    virtual ~ExprAST() = default;
+};
+
+class NumberExprAST : public ExprAST {
+    double Val;
+public:
+    NumberExprAST(double val) : Val(val) {}
+};
