@@ -1,4 +1,4 @@
-#include <cstdlib>
+2#include <cstdlib>
 #include <ctype.h>
 #include <stdio.h>
 #include <string>
@@ -136,3 +136,15 @@ public:
                   std::unique_ptr<ExprAST> Body)
         : Proto(std::move(Proto)), Body(std::move(Body)) {}
 };
+
+auto LHS = std::make_unique<VariableExprAST>("x");
+auto RHS = std::make_unique<VariableExprAST>("y");
+auto Result = std::make_unique<BinaryExprAST>('+', std::move(LHS), std::move(RHS));
+                                             
+/// CurTok/getNextToken - Provide a simple token buffer.  CurTok is the current
+/// token the parser is looking at.  getNextToken reads another token from the
+/// lexer and updates CurTok with its results.
+static int CurTok;
+static int getNextToken() {
+    return CurTok = gettok();
+}
