@@ -1,4 +1,3 @@
-#include <cstdlib>
 #include <cctype>
 #include <cstdio>
 #include <string>
@@ -24,7 +23,7 @@ enum Token
     tok_number = -5,
 };
 
-static std::string identifier_string; // Filled in if tok_identifier
+static std::string identifierString; // Filled in if tok_identifier
 static double NumVal;                // Filled in if tok_number
 
 /// gettok - Return the next token from standard input.
@@ -36,13 +35,13 @@ static int gettok()
         last_char = getchar();
 
     if (isalpha(last_char)) {
-        identifier_string = last_char;
+        identifierString = last_char;
         while (isalnum((last_char = getchar())))
-            identifier_string += last_char;
+            identifierString += last_char;
 
-        if (identifier_string == "def")
+        if (identifierString == "def")
             return tok_def;
-        if (identifier_string == "extern")
+        if (identifierString == "extern")
             return tok_extern;
 
         return tok_identifier;
@@ -273,6 +272,7 @@ static std::unique_ptr<ExprAST> ParseBinOpRHS(int ExprPrec,
         if (TokPrec < ExprPrec)
             return LHS;
     }
+
 }
 int main() {
     // Install standard binary operators.
