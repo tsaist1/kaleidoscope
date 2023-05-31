@@ -4,11 +4,11 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include <map>
 
-
-/*---------------------------------------------------------------------------------------------------------------------
+/*---------------------------------------------------------------------------------
  * Parser
- *--------------------------------------------------------------------------------------------------------------------*/
+ *-------------------------------------------------------------------------------*/
 // The lexer returns tokens [0-255] if it is an unknown character, otherwise one of
 // these for known things.
 enum Token
@@ -76,9 +76,9 @@ static int gettok()
     last_char = getchar();
     return this_char;
 }
-/*---------------------------------------------------------------------------------------------------------------------/
+/*-------------------------------------------------------------------------------
  * Abstract Syntax Tree (Parse Tree)
- *--------------------------------------------------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------------*/
 namespace {
 /// ExprAST - Base class for all expression nodes.
     class ExprAST {
@@ -144,9 +144,9 @@ namespace {
                 : Proto(std::move(Proto)), Body(std::move(Body)) {}
     };
 } // end anonymous namespace
-/*---------------------------------------------------------------------------------------------------------------------/
+/*--------------------------------------------------------------------------------
  * Parser
- *--------------------------------------------------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------------*/
 /// CurTok/getNextToken - Provide a simple token buffer.  CurTok is the current
 /// token the parser is looking at.  getNextToken reads another token from the
 /// lexer and updates CurTok with its results.
@@ -233,4 +233,30 @@ static std::unique_ptr<ExprAST> ParsePrimary() {
         case '(':
             return ParseParenExpr();
     }
+}
+
+/// BinopPrecedence - This holds the precedence for each binary operator that is
+/// defined.
+static std::map<char, int> BinopPrecedence;
+
+/// GetTokPrecedence - Get the precedence of the pending binary operator token.
+static int GetTokPrecedence()
+{
+    if (!isascii(CurTok))
+        return -1;
+
+    int TokPrec = BinopPrecedence[CurTok];
+    if (TokPrec <= 0) return -1;
+    return TokPrec;
+}
+
+int main() {
+    // Install standard binary operators.
+    // 1 is lowest precedence.
+    BinopPrecedence['<'] = 10;
+    BinopPrecedence['+'] = 20;
+    BinopPrecedence['-'] = 30;
+    BinopPrecedence['*'] = 40;	// highest.
+    // TODO: binary operators
+    return 0;
 }
